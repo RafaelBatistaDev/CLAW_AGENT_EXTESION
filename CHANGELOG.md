@@ -1,6 +1,35 @@
 # Changelog
 
-## [1.1.0] - 2026-04-07
+## [1.0.2] - 2026-04-07
+
+### 🎯 Versão Focada - Release Profissional
+
+**NOVO:**
+- ✨ 6 comandos principais: analyze, improve, document, test, ask, status
+- ✨ Interface limpa e direta - sem sugestões inline
+- ✨ Menu contextual (clique direito)
+- ✨ Paleta de comandos (Ctrl+Shift+P)
+- ✨ Suporte multi-provider de IA
+- ✨ Auto-detect de IA
+- ✨ Painel de resultados WebView
+- ✨ Botão copiar automático
+
+**REMOVIDO:**
+- ❌ Sugestões inline
+- ❌ Complex caching
+- ❌ Dependência Python
+- ❌ agent.py integration
+- ❌ Complexidade desnecessária
+
+**MELHORADO:**
+- ⚡ Código 50% menor
+- ⚡ Setup via variáveis ambiente
+- ⚡ Zero dependências extras
+- ⚡ README focado
+
+---
+
+## [1.1.0] - 2026-04-05 (Descontinuado)
 
 ### ✨ Features
 - **Inline Code Completion** — Sugestões de IA em tempo real enquanto você digita

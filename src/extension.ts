@@ -1,168 +1,247 @@
 /**
- * CLAW - Extensão VS Code com Sugestões Inline
- * Integra agent.py com InlineCompletionItemProvider
- * 
- * Arquitetura:
- * 1. InlineCompletionProvider observa cursor (debounce 500ms)
- * 2. AgentManager chama agent.py via subprocess
- * 3. TokenCache economiza APIcalls com similaridade semântica
- * 4. CircuitBreaker + Fallback automático entre agentes
- * 
- * Fluxo UX:
- * - Usuário para de digitar
- * - Extension envia contexto para agent.py
- * - Sugestão aparece em cinza (tentativa)
- * - Tab: aceita | Esc: rejeita
+ * 🤖 CLAW AGENT v1.0.2
+ * Agente profissional de IA focado em:
+ * - analyze: encontra bugs e melhorias
+ * - improve: refatora e otimiza
+ * - document: gera documentação
+ * - test: cria testes automáticos
+ * - ask: responde perguntas sobre código
+ * - status: mostra status e ajuda
  */
 
 import * as vscode from 'vscode';
-import { InlineCompletionProvider } from './inlineCompletionProvider';
 import { AgentManager } from './agentManager';
-import { TokenCache } from './tokenCache';
-import { Logger } from './logger';
 
 let agentManager: AgentManager;
-let tokenCache: TokenCache;
-let logger: Logger;
 
 export async function activate(context: vscode.ExtensionContext) {
     try {
-        // ════════════════════════════════════════════════════════════════════════════════
-        // INICIALIZAR COMPONENTES
-        // ════════════════════════════════════════════════════════════════════════════════
+        console.log('🤖 Ativando CLAW Agent v1.0.2...');
 
-        logger = new Logger('CLAW', getLogLevel());
-        logger.info('🤖 Ativando CLAW Agent Extension...');
-
-        // Inicializar cache
-        tokenCache = new TokenCache(context.globalStorageUri.fsPath);
-        logger.info(`✅ Cache inicializado: ${tokenCache.getStats()}`);
-
-        // Inicializar gerenciador de agentes (conecta com agent.py)
-        agentManager = new AgentManager(logger);
-        const agentStatus = await agentManager.initialize();
-        logger.info(`✅ AgentManager inicializado: ${agentStatus}`);
-
-        // Registrar InlineCompletionProvider
-        const provider = new InlineCompletionProvider(
-            agentManager,
-            tokenCache,
-            logger,
-            getDebounceMs(),
-            getMaxTokens()
-        );
-
-        const selector: vscode.DocumentSelector = [
-            { pattern: '**/*.py', language: 'python' },
-            { pattern: '**/*.ts', language: 'typescript' },
-            { pattern: '**/*.js', language: 'javascript' },
-            { pattern: '**/*.tsx', language: 'typescriptreact' },
-            { pattern: '**/*.jsx', language: 'javascriptreact' },
-            { pattern: '**/*.cs', language: 'csharp' },
-            { pattern: '**/*.rs', language: 'rust' },
-            { pattern: '**/*.go', language: 'go' },
-            { pattern: '**/*.rb', language: 'ruby' },
-            { pattern: '**/*.php', language: 'php' },
-            { pattern: '**/*.cpp', language: 'cpp' },
-            { pattern: '**/*.c', language: 'c' },
-            { pattern: '**/*.java', language: 'java' },
-        ];
-
-        const disposable = vscode.languages.registerInlineCompletionItemProvider(
-            selector,
-            provider
-        );
-
-        context.subscriptions.push(disposable);
-        logger.info('✅ InlineCompletionProvider registrado');
+        // Inicializar gerenciador de agentes
+        agentManager = new AgentManager();
+        await agentManager.initialize();
 
         // ════════════════════════════════════════════════════════════════════════════════
-        // REGISTRAR COMANDOS
+        // COMANDO 1: ANALISAR CÓDIGO
         // ════════════════════════════════════════════════════════════════════════════════
-
-        // Comando: Ativar/Desativar
         context.subscriptions.push(
-            vscode.commands.registerCommand('clawrafaelia.toggleSuggestions', async () => {
-                const currentState = vscode.workspace.getConfiguration('clawrafaelia').get('enabled');
-                await vscode.workspace.getConfiguration('clawrafaelia').update('enabled', !currentState);
-                const newState = !currentState ? '✅ Ativado' : '❌ Desativado';
-                vscode.window.showInformationMessage(`CLAW Sugestões: ${newState}`);
-                logger.info(`Toggle: ${newState}`);
-            })
-        );
+            vscode.commands.registerCommand('clawagent.analyze', async () => {
+                const editor = vscode.window.activeTextEditor;
+                if (!editor) {
+                    vscode.window.showWarningMessage('❌ Abra um arquivo para analisar');
+                    return;
+                }
 
-        // Comando: Limpar Cache
-        context.subscriptions.push(
-            vscode.commands.registerCommand('clawrafaelia.clearCache', async () => {
-                tokenCache.clear();
-                vscode.window.showInformationMessage('🧹 Cache CLAW limpo');
-                logger.info('Cache limpo pelo usuário');
-            })
-        );
-
-        // Comando: Mostrar Status
-        context.subscriptions.push(
-            vscode.commands.registerCommand('clawrafaelia.showStatus', async () => {
-                const cacheStats = tokenCache.getStats();
-                const agentStats = await agentManager.getStatus();
-                const message = `
-CLAW Agent Status:
-• Cache: ${cacheStats}
-• Agents: ${agentStats}
-• Log Level: ${getLogLevel()}
-• Debounce: ${getDebounceMs()}ms
-• Max Tokens: ${getMaxTokens()}
-                `;
-                vscode.window.showInformationMessage(message);
-                logger.info('Status exibido');
+                const filePath = editor.document.fileName;
+                const code = editor.document.getText();
+                
+                vscode.window.showInformationMessage('🔍 Analisando código...');
+                const result = await agentManager.analyze(code, filePath);
+                
+                if (result) {
+                    showResultPanel('Análise de Código', result);
+                }
             })
         );
 
         // ════════════════════════════════════════════════════════════════════════════════
-        // MONITORAR MUDANÇAS DE CONFIGURAÇÃO
+        // COMANDO 2: MELHORAR CÓDIGO
         // ════════════════════════════════════════════════════════════════════════════════
+        context.subscriptions.push(
+            vscode.commands.registerCommand('clawagent.improve', async () => {
+                const editor = vscode.window.activeTextEditor;
+                if (!editor) {
+                    vscode.window.showWarningMessage('❌ Abra um arquivo para melhorar');
+                    return;
+                }
 
-        vscode.workspace.onDidChangeConfiguration(event => {
-            if (event.affectsConfiguration('clawrafaelia')) {
-                logger.info('⚙️  Configuração atualizada');
-                // Provider verifica getLogLevel() dinamicamente
-            }
-        });
+                const filePath = editor.document.fileName;
+                const code = editor.document.getText();
+                
+                vscode.window.showInformationMessage('✨ Melhorando código...');
+                const result = await agentManager.improve(code, filePath);
+                
+                if (result) {
+                    showResultPanel('Código Melhorado', result);
+                }
+            })
+        );
 
-        // Status bar para indicar que CLAW está ativo
-        const statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-        statusBar.command = 'clawrafaelia.showStatus';
-        statusBar.text = '$(sparkle) CLAW Active';
-        statusBar.tooltip = 'Clique para ver status | Ctrl+Alt+C: toggle';
-        statusBar.show();
-        context.subscriptions.push(statusBar);
+        // ════════════════════════════════════════════════════════════════════════════════
+        // COMANDO 3: GERAR DOCUMENTAÇÃO
+        // ════════════════════════════════════════════════════════════════════════════════
+        context.subscriptions.push(
+            vscode.commands.registerCommand('clawagent.document', async () => {
+                const editor = vscode.window.activeTextEditor;
+                if (!editor) {
+                    vscode.window.showWarningMessage('❌ Abra um arquivo para documentar');
+                    return;
+                }
 
-        logger.info('✨ CLAW Agent Extension ativada com sucesso!');
-        vscode.window.showInformationMessage('✨ CLAW Agent ativado! Sugere código em tempo real.');
+                const filePath = editor.document.fileName;
+                const code = editor.document.getText();
+                
+                vscode.window.showInformationMessage('📚 Gerando documentação...');
+                const result = await agentManager.document(code, filePath);
+                
+                if (result) {
+                    showResultPanel('Documentação Gerada', result);
+                }
+            })
+        );
+
+        // ════════════════════════════════════════════════════════════════════════════════
+        // COMANDO 4: CRIAR TESTES
+        // ════════════════════════════════════════════════════════════════════════════════
+        context.subscriptions.push(
+            vscode.commands.registerCommand('clawagent.test', async () => {
+                const editor = vscode.window.activeTextEditor;
+                if (!editor) {
+                    vscode.window.showWarningMessage('❌ Abra um arquivo para criar testes');
+                    return;
+                }
+
+                const filePath = editor.document.fileName;
+                const code = editor.document.getText();
+                
+                vscode.window.showInformationMessage('🧪 Criando testes...');
+                const result = await agentManager.test(code, filePath);
+                
+                if (result) {
+                    showResultPanel('Testes Criados', result);
+                }
+            })
+        );
+
+        // ════════════════════════════════════════════════════════════════════════════════
+        // COMANDO 5: FAZER PERGUNTA
+        // ════════════════════════════════════════════════════════════════════════════════
+        context.subscriptions.push(
+            vscode.commands.registerCommand('clawagent.ask', async () => {
+                const question = await vscode.window.showInputBox({
+                    prompt: 'Qual é sua pergunta?',
+                    placeHolder: 'Ex: Como melhorar este código?'
+                });
+
+                if (!question) return;
+
+                const editor = vscode.window.activeTextEditor;
+                let code = '';
+
+                if (editor) {
+                    code = editor.document.getText();
+                }
+
+                vscode.window.showInformationMessage('❓ Processando pergunta...');
+                const result = await agentManager.ask(question, code);
+                
+                if (result) {
+                    showResultPanel('Resposta do Agent', result);
+                }
+            })
+        );
+
+        // ════════════════════════════════════════════════════════════════════════════════
+        // COMANDO 6: MOSTRAR STATUS
+        // ════════════════════════════════════════════════════════════════════════════════
+        context.subscriptions.push(
+            vscode.commands.registerCommand('clawagent.status', async () => {
+                const status = await agentManager.getStatus();
+                showResultPanel('CLAW Agent - Status', status);
+            })
+        );
+
+        console.log('✅ CLAW Agent v1.0.2 ativado com sucesso!');
+        vscode.window.showInformationMessage('✅ CLAW Agent v1.0.2 pronto!');
 
     } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : String(error);
-        logger?.error(`Erro ao ativar extensão: ${errorMsg}`);
-        vscode.window.showErrorMessage(`❌ Falha ao ativar CLAW: ${errorMsg}`);
+        console.error('❌ Erro ao ativar CLAW Agent:', error);
+        vscode.window.showErrorMessage(`❌ Erro ao ativar CLAW Agent: ${error}`);
     }
 }
 
-export function deactivate() {
-    logger?.info('CLAW Agent Extension desativada');
+/**
+ * Mostra resultado em um painel
+ */
+function showResultPanel(title: string, content: string) {
+    const panel = vscode.window.createWebviewPanel(
+        'clawAgentResult',
+        title,
+        vscode.ViewColumn.Beside,
+        { enableScripts: true }
+    );
+
+    panel.webview.html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                    padding: 20px;
+                    line-height: 1.6;
+                    color: #e0e0e0;
+                    background-color: #1e1e1e;
+                }
+                h1 {
+                    color: #4fc3f7;
+                    border-bottom: 2px solid #4fc3f7;
+                    padding-bottom: 10px;
+                }
+                pre {
+                    background-color: #2d2d2d;
+                    padding: 15px;
+                    border-radius: 5px;
+                    overflow-x: auto;
+                    border-left: 3px solid #4fc3f7;
+                }
+                code {
+                    font-family: 'Consolas', 'Monaco', monospace;
+                    font-size: 13px;
+                }
+                .copy-btn {
+                    background-color: #4fc3f7;
+                    color: #1e1e1e;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    margin-top: 10px;
+                    font-weight: bold;
+                }
+                .copy-btn:hover {
+                    background-color: #81d4fa;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>${title}</h1>
+            <pre><code>${escapeHtml(content)}</code></pre>
+            <button class="copy-btn" onclick="copyToClipboard()">📋 Copiar</button>
+            <script>
+                function copyToClipboard() {
+                    const code = document.querySelector('code').innerText;
+                    navigator.clipboard.writeText(code).then(() => {
+                        alert('✅ Copiado para área de transferência!');
+                    });
+                }
+            </script>
+        </body>
+        </html>
+    `;
 }
 
-// ════════════════════════════════════════════════════════════════════════════════
-// HELPERS PARA LER CONFIGURAÇÕES
-// ════════════════════════════════════════════════════════════════════════════════
-
-function getLogLevel(): string {
-    return vscode.workspace.getConfiguration('clawrafaelia').get('logLevel', 'info');
+/**
+ * Escapa caracteres especiais para HTML
+ */
+function escapeHtml(text: string): string {
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
 
-function getDebounceMs(): number {
-    return vscode.workspace.getConfiguration('clawrafaelia').get('debounceMs', 500);
-}
-
-function getMaxTokens(): number {
-    return vscode.workspace.getConfiguration('clawrafaelia').get('maxTokens', 150);
-}
+export function deactivate() {}

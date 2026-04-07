@@ -1,303 +1,384 @@
-# 🤖 CLAW AGENT v1.1.0 — Agente Profissional de IA
+# 🤖 CLAW AGENT v1.0.2
 
-Assistente inteligente de código para análise, refatoração, documentação e testes automáticos.
+**Agente profissional de IA para análise, refatoração, documentação e testes automáticos**
+
+> Versão focada: 6 comandos principais. Sem complexidade desnecessária. Puro profissionalismo.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Python 3.7+](https://img.shields.io/badge/Python-3.7+-blue.svg)](https://www.python.org/)
+[![Version: 1.0.2](https://img.shields.io/badge/Version-1.0.2-blue.svg)](.)
 [![Status: Production Ready](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg)](.)
 
 ---
 
-## ⚡ Instruções Rápidas
+## ⚡ Início Rápido (3 minutos)
 
-```
-═════════════════════════════════════════════════════════════════
-  🤖 AGENTE PROFISSIONAL - 5 Comandos Principais
-═════════════════════════════════════════════════════════════════
+```bash
+# 1. Configurar IA (escolha UMA):
 
-  agent analyze <arquivo>      → Encontra bugs e melhorias
-  agent improve <arquivo>      → Refatora e melhora código
-  agent document <arquivo>     → Gera documentação automática
-  agent test <arquivo>         → Cria testes automáticos
-  agent ask PERGUNTA           → Responde qualquer pergunta!
-  agent status                 → Mostra status e ajuda
+#    A) OpenAI (recomendado):
+export OPENAI_API_KEY="sk-..."
 
-═════════════════════════════════════════════════════════════════
+#    B) Google Gemini (grátis):
+export GOOGLE_API_KEY="AIzaSy..."
 
-  💬 Dica 1: use descrições em português!
-  💬 Dica 2: ex: agent ask qual é a capital do Brasil?
-  💬 Dica 3: ex: agent analyze meu_codigo.py
+#    C) Ollama (100% local, grátis):
+export OLLAMA_ENDPOINT="http://localhost:11434"
+
+# 2. Abrir VS Code
+# 3. Abrir qualquer arquivo de código
+# 4. Usar: Clique direito → escolha ação OU Ctrl+Shift+P
 ```
 
 ---
 
-## 🚀 Começar em 30 segundos
+## 📊 6 Comandos Principais
 
-### Opção 1: Via GitHub (Recomendado)
+### 1️⃣ **ANALISAR** 🔍
 
-```bash
-# 1. Clone
-git clone https://github.com/claw-agent/vscode-extension.git
+Encontra bugs, problemas de segurança e ineficiências.
 
-# 2. Setup
-bash docs/setup/ACTIVATE.sh && source ~/.bashrc
-
-# 3. Configure sua chave API (Google Gemini)
-nano ~/.claw/config/.claude.json
-
-# 4. Use!
-agent analyze seu_arquivo.py
+```
+🔍 Clique direito no editor → "🔍 CLAW Agent: Analisar Código"
+Ou: Ctrl+Shift+P → CLAW Agent: Analyze
 ```
 
-### Opção 2: Via ZIP (Sem Git)
-
-```bash
-# 1. Descompacte
-unzip CLAW_AGENT_v1.1.0.zip -d claw-agent
-cd claw-agent
-
-# 2. Setup
-bash docs/setup/ACTIVATE.sh && source ~/.bashrc
-
-# 3. Configure chave (Google Gemini)
-nano ~/.claw/config/.claude.json
-
-# 4. Digite sua chave e salve (Ctrl+O, Enter, Ctrl+X)
-
-# 5. Use!
-agent analyze seu_arquivo.py
-```
-
-#### 📥 Baixar ZIP
-→ [CLAW_AGENT_v1.1.0.zip](https://github.com/claw-agent/vscode-extension/releases)
+**Detecta:**
+- ✅ Bugs potenciais
+- ✅ Problemas de segurança
+- ✅ Ineficiências de performance
+- ✅ Código smell
 
 ---
 
+### 2️⃣ **MELHORAR** ✨
+
+Refatora e otimiza código automaticamente.
+
+```
+✨ Clique direito no editor → "✨ CLAW Agent: Melhorar Código"
+Ou: Ctrl+Shift+P → CLAW Agent: Improve
+```
+
+**Otimiza:**
+- ✅ Algoritmos e performance
+- ✅ Legibilidade
+- ✅ Tratamento de erros
+- ✅ Boas práticas
+
 ---
 
-## 🎯 O Que Faz?
+### 3️⃣ **DOCUMENTAR** 📚
 
-### 🔍 **ANALYZE** — Encontra Bugs
+Cria documentação profissional em Markdown.
 
-Detecta bugs, vulnerabilidades de segurança e problemas de performance.
-
-```bash
-agent analyze app.py
 ```
-
-**Resultado:**
-```
-🐛 BUGS ENCONTRADOS (2):
-  • Linha 42: Exception não capturada
-  • Linha 87: Risco de overflow inteiro
-
-🚀 MELHORIAS (3):
-  • Use 'with' para file operations
-  • Cache de regex
-  • Adicionar type hints
-```
-
-### ♻️ **IMPROVE** — Refatora Código
-
-Melhora código automaticamente mantendo funcionalidade.
-
-```bash
-agent improve app.py
-```
-
-**O que melhora:**
-- Readability e clareza
-- Performance
-- Best practices
-- Código moderno
-
-### 📚 **DOCUMENT** — Gera Documentação
-
-Cria documentação markdown profissional automaticamente.
-
-```bash
-agent document app.py
+📚 Clique direito no editor → "📚 CLAW Agent: Gerar Documentação"
+Ou: Ctrl+Shift+P → CLAW Agent: Document
 ```
 
 **Gera:**
-- Assinaturas de funções
-- Descrições detalhadas
-- Exemplos de uso
-- Type hints
-
-### ✅ **TEST** — Cria Testes
-
-Gera testes unitários automaticamente.
-
-```bash
-agent test app.py
-```
-
-**Inclui:**
-- Testes de cobertura completa
-- Edge cases
-- Mocking
-- Assertions
-
-### 💬 **ASK** — Pergunta Qualquer Coisa
-
-IA responde qualquer pergunta sobre código.
-
-```bash
-agent ask "como otimizar loops em Python?"
-agent ask "qual é a melhor prática para API REST?"
-```
+- ✅ Descrições de funções/classes
+- ✅ Parâmetros com tipos
+- ✅ Exemplos de uso
+- ✅ Exceções possíveis
 
 ---
 
-## 📋 Linguagens Suportadas
+### 4️⃣ **TESTAR** 🧪
 
-✅ Python  
-✅ JavaScript  
-✅ TypeScript  
-✅ Rust  
-✅ C#  
-✅ Go  
-✅ Ruby  
-✅ PHP  
-✅ Java  
-✅ C++  
-✅ SQL  
+Cria testes unitários completos.
+
+```
+🧪 Clique direito no editor → "🧪 CLAW Agent: Criar Testes"
+Ou: Ctrl+Shift+P → CLAW Agent: Test
+```
+
+**Testes:**
+- ✅ Cobertura completa
+- ✅ Casos extremos
+- ✅ Mocks automáticos
+- ✅ Ready to use
 
 ---
 
-## 🔧 Configuração
+### 5️⃣ **PERGUNTAR** ❓
 
-### Setup Básico
+Responde qualquer pergunta sobre código.
 
+```
+❓ Clique direito → "❓ CLAW Agent: Fazer Pergunta"
+Ou: Ctrl+Shift+P → CLAW Agent: Ask Question
+```
+
+**Pode perguntar:**
+- "Como otimizar este código?"
+- "Qual é a melhor prática?"
+- Qualquer coisa sobre código!
+
+---
+
+### 6️⃣ **STATUS** ℹ️
+
+Verifica configuração e mostra ajuda.
+
+```
+ℹ️ Ctrl+Shift+P → "ℹ️ CLAW Agent: Status"
+```
+
+**Mostra:**
+- ℹ️ IA Provider (OpenAI, Gemini, etc)
+- ℹ️ Status da API Key
+- ℹ️ Versão: 1.0.2
+- ℹ️ Menu de comandos
+
+---
+
+## 🔧 Configuração Completa
+
+### Passo 1: Instalar
+
+**Opção A: VS Code Marketplace (em breve)**
+```
+Será publicada em breve no VS Code Marketplace
+```
+
+**Opção B: Compilar Localmente**
 ```bash
-# 1. Instale (cria ~/.claw/)
-bash docs/setup/ACTIVATE.sh
+git clone https://github.com/claw-agent/vscode-extension
+cd vscode-extension
+npm install
+npm run compile
+npm run vscode:prepublish
+```
 
-# 2. Reconfigure shell
+### Passo 2: Configurar IA
+
+**For Linux/macOS:**
+```bash
+# Temporário (sessão atual):
+export OPENAI_API_KEY="sk-..."
+
+# Permanente (~/.bashrc):
+echo 'export OPENAI_API_KEY="sk-..."' >> ~/.bashrc
 source ~/.bashrc
-
-# 3. Configure chave Google Gemini
-nano ~/.claw/config/.claude.json
-
-# 4. Teste
-agent status
 ```
 
-### Usar Ollama (Sem Internet)
-
-```bash
-# 1. Instale Ollama
-curl -fsSL https://ollama.ai/install.sh | sh
-
-# 2. Baixe modelo
-ollama pull mistral
-ollama serve
-
-# 3. Agent usa automaticamente como fallback
-agent analyze seu_arquivo.py
+**For Windows:**
+```cmd
+setx OPENAI_API_KEY sk-...
+# Depois reabra o terminal
 ```
 
-### Variáveis de Ambiente
+### Passo 3: Testar
 
 ```bash
-export GOOGLE_GEMINI_API_KEY="sua_chave"
-export API_TIMEOUT=60
-export OLLAMA_HOST="localhost:11434"
+# No VS Code:
+# Ctrl+Shift+P → CLAW Agent: Status
+
+# Deve mostrar: ✅ Conexão com: OpenAI
 ```
 
 ---
 
-## 📖 Documentação Completa
+## 🤖 Providers de IA
+
+| Provider | Setup | Grátis | Recomendado |
+|----------|-------|--------|--|
+| **OpenAI** | `OPENAI_API_KEY=sk-...` | ❌ | ⭐⭐⭐⭐⭐ |
+| **Google Gemini** | `GOOGLE_API_KEY=AIzaSy...` | ✅ Plano Free | ⭐⭐⭐⭐ |
+| **Claude** | `ANTHROPIC_API_KEY=sk-ant-...` | ❌ | ⭐⭐⭐⭐ |
+| **Ollama** | `OLLAMA_ENDPOINT=http://localhost:11434` | ✅ 100% | ⭐⭐⭐ |
+| **LocalAI** | `LOCALAI_ENDPOINT=http://localhost:8080` | ✅ 100% | ⭐⭐ |
+
+---
+
+## 📚 Documentação Completa
 
 | Documento | Para Quem |
 |-----------|-----------|
-| [SETUP.md](SETUP.md) | Mais detalhes de instalação |
-| [QUICKSTART.md](QUICKSTART.md) | Referência rápida dos comandos |
-| [INSTALLATION_PATHS.md](INSTALLATION_PATHS.md) | Onde ficam os arquivos após setup |
-| [TROUBLESHOOTING.md](TROUBLESHOOTING.md) | Soluções para problemas comuns |
+| [BUILD_GUIDE.md](BUILD_GUIDE.md) | Como compilar a extensão |
+| [CHANGELOG.md](CHANGELOG.md) | Histórico de versões |
 
 ---
 
-## 💡 Exemplos Práticos
+## 🎯 Fluxo de Trabalho
 
-### Exemplo 1: Analisar Código
+**Workflow típico:**
 
-```bash
-echo 'def soma(a,b):
-    return a+b' > teste.py
+1. Abra arquivo em VS Code
+2. Clique direito no editor
+3. Escolha ação (analyze, improve, document, test)
+4. Aguarde resposta da IA
+5. Veja resultado em painel lateral
+6. Copie e cole no código
 
-agent analyze teste.py
+---
+
+## 💡 Use Cases
+
+### Code Review Automático
+```
+Analisar pull requests com CLAW Agent
+Antes de merge: sempre executar "analyze"
 ```
 
-### Exemplo 2: Melhorar Código
-
-```bash
-agent improve teste.py
+### Documentação Seca
+```
+Código novo sem docs? 
+Execute "document" e pronto!
 ```
 
-### Exemplo 3: Documentar
-
-```bash
-agent document teste.py
+### Cobertura de Testes
+```
+Novo módulo? Execute "test"
+Testes já criados e prontos
 ```
 
-### Exemplo 4: Testar
-
-```bash
-agent test teste.py
+### Refatoração
+```
+Código legado? Execute "improve"
+Melhoria automática + explicações
 ```
 
-### Exemplo 5: Perguntar
-
-```bash
-agent ask "qual é a diferença entre == e is em Python?"
+### Aprendizado
+```
+Dúvida sobre código?
+Execute "ask" com sua pergunta
 ```
 
 ---
 
-## ✨ Por Que Usar?
-
-✅ **Economiza Tempo** — Análise automática e instantânea  
-✅ **Encontra Bugs** — Antes de ir para produção  
-✅ **Melhora Código** — Com best practices automáticas  
-✅ **Documentação Seca** — Sem escrever nada  
-✅ **Testes Grátis** — Coverage automático  
-✅ **Aprenda** — Dúvidas sobre código respondidas  
-✅ **Totalmente Offline** — Com Ollama/LocalAI  
-✅ **Code Review** — Segunda opinião profissional  
-
----
-
-## 🔐 Segurança & Privacidade
+## 🔐 Privacidade
 
 ✅ Nenhuma chave API no repositório  
-✅ Secrets como variáveis de ambiente  
-✅ Cache local apenas (`~/.claw/`)  
-✅ Nenhum dado enviado sem permissão  
-✅ Suporta rodas totalmente offline (Ollama)  
+✅ Secrets via variáveis de ambiente  
+✅ Suporta uso 100% offline (Ollama)  
 ✅ MIT License — Uso comercial permitido  
 
 ---
 
-## 📊 Status
+## 📊 Linguagens Suportadas
 
-| Aspecto | Status |
-|---------|--------|
-| **Core Agent** | ✅ Estável |
-| **APIs** | ✅ Google Gemini + Ollama |
-| **Linguagens** | ✅ 10+ |
-| **Documentação** | ✅ Completa |
-| **Produção** | ✅ Pronto |
+✅ Python  
+✅ JavaScript / TypeScript  
+✅ C# / Java / C++  
+✅ Go / Rust / Ruby  
+✅ PHP / SQL  
 
 ---
 
-## 🎊 Estatísticas
+## 🚀 Recursos
 
-- **2000+ linhas** de código profissional
-- **10+ linguagens** suportadas
-- **3 APIs** com fallback automático
-- **Zero** dependências externas
+- ✅ **6 Comandos Profissionais** - Focado em produtividade
+- ✅ **Multi-Provider** - OpenAI, Gemini, Claude, LocalAI, Ollama
+- ✅ **Auto-Detect** - Detecta qual IA você tem configurada
+- ✅ **Menu Contextual** - Clique direito = acesso rápido
+- ✅ **Paleta de Comandos** - Ctrl+Shift+P = completo
+- ✅ **Interface Clara** - Resultados em painel lateral
+- ✅ **Zero Complexidade** - Versão 1.0.2: focada e simples
+
+---
+
+## 🐛 Troubleshooting
+
+### "Nenhuma IA configurada"
+```bash
+# Verificar variável:
+echo $OPENAI_API_KEY
+
+# Configurar:
+export OPENAI_API_KEY="sk-sua-chave"
+source ~/.bashrc
+
+# Testar:
+# Ctrl+Shift+P → CLAW Agent: Status
+```
+
+### "Timeout esperando resposta"
+- Verificar internet
+- Tentar com Ollama (local)
+- Usar arquivo menor para testar
+
+### "API Key inválida"
+- Verificar chave
+- Gerar nova se necessário
+- Testar em console provider
+
+---
+
+## 📱 Desenvolvimento
+
+### Compilar
+
+```bash
+npm install
+npm run watch        # Modo watch
+npm run compile:prod # Build final
+```
+
+### Criar Extension (.vsix)
+
+```bash
+npm install -g vsce
+vsce package
+
+# Resultado: claw-agent-1.0.2.vsix
+```
+
+### Instalar Localmente
+
+```bash
+code --install-extension claw-agent-1.0.2.vsix
+```
+
+---
+
+## 📈 Roadmap Futuro
+
+- [ ] Integração com GitHub (PR comments)
+- [ ] Upload para VS Code Marketplace
+- [ ] Suporte a mais modelos locais
+- [ ] Cache de respostas
+- [ ] Histórico de análises
+- [ ] Estatísticas de uso
+- [ ] CLI standalone (não apenas VS Code)
+
+---
+
+## 📄 Licença
+
+MIT © 2026 Rafael Batista
+
+Você é livre para usar, modificar e distribuir. Veja [LICENSE](LICENSE)
+
+---
+
+## 🤝 Contribuir
+
+Issues, PRs e feedback bem-vindos!
+
+→ https://github.com/claw-agent/vscode-extension
+
+---
+
+## 📧 Contato
+
+- **Email**: rafaelbatistadev@outlook.com.br
+- **GitHub**: https://github.com/RafaelBatistaDev
+- **Issues**: https://github.com/claw-agent/vscode-extension/issues
+
+---
+
+## 🎊 Stats
+
+- **v1.0.2**: Release focada em profissionalismo
+- **6 comandos**: Simples, poderoso eficiente
+- **5 providers de IA**: Máxima compatibilidade
+- **MIT License**: Uso comercial permitido
+
+---
+
+**Made with ❤️ for developers by Rafael Batista**
 - **100% Python** puro
 
 ---
