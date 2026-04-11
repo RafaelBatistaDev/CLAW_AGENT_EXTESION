@@ -1,8 +1,8 @@
 {
   "name": "claw-agent",
   "displayName": "CLAW AGENT - Seu Assistente de IA para Código",
-  "description": "Agente profissional de IA. Analisa, refatora, documenta e testa código. Suporta: analyze, improve, document, test, ask, status",
-  "version": "1.1.2",
+  "description": "🤖 Agente profissional de IA multiplataforma (Windows/macOS/Linux). Analisa, refatora, documenta e testa código. Suporta: OpenAI, Gemini, Claude, Ollama, LocalAI",
+  "version": "1.1.3",
   "icon": "icon.png",
   "publisher": "RafaelBatista",
   "author": {
@@ -20,17 +20,27 @@
   },
   "categories": [
     "Programming Languages",
-    "Other"
+    "Other",
+    "AI"
   ],
   "keywords": [
     "ai-agent",
+    "ai-assistant",
     "code-analysis",
-    "refactoring",
-    "documentation",
-    "testing",
+    "code-refactoring",
+    "documentation-generator",
+    "test-generator",
+    "code-review",
     "gemini",
     "openai",
-    "claude"
+    "claude",
+    "ollama",
+    "localai",
+    "cross-platform",
+    "windows",
+    "macos",
+    "linux",
+    "multi-language"
   ],
   "activationEvents": [
     "onStartupFinished"
@@ -38,6 +48,18 @@
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
+      {
+        "command": "clawagent.toggle",
+        "title": "🔌 CLAW Agent: Ativar/Desativar"
+      },
+      {
+        "command": "clawagent.showMenu",
+        "title": "🤖 CLAW Agent: Abrir Menu"
+      },
+      {
+        "command": "clawagent.startLiveServer",
+        "title": "🚀 CLAW Agent: Iniciar/Parar Live Server"
+      },
       {
         "command": "clawagent.analyze",
         "title": "🔍 CLAW Agent: Analisar Código"
@@ -61,49 +83,572 @@
       {
         "command": "clawagent.status",
         "title": "ℹ️ CLAW Agent: Status"
+      },
+      {
+        "command": "clawagent.openSettings",
+        "title": "⚙️ CLAW Agent: Abrir Configurações"
+      },
+      {
+        "command": "clawagent.refresh",
+        "title": "🔄 CLAW Agent: Atualizar Configurações",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "clawagent.showLastResult",
+        "title": "📋 CLAW Agent: Mostrar Último Resultado"
       }
+        ,
+        {
+          "command": "claw.refreshEntry",
+          "title": "🔄 CLAW: Refresh Sugestões"
+        },
+        {
+          "command": "claw.deleteEntry",
+          "title": "❌ CLAW: Deletar Sugestão"
+        }
+        ,
+        {
+          "command": "claw.openSuggestions",
+          "title": "📂 CLAW: Abrir Sugestões"
+        }
     ],
     "menus": {
+      "commandPalette": [
+        {
+          "command": "clawagent.toggle",
+          "when": "true"
+        },
+        {
+          "command": "clawagent.analyze",
+          "when": "true"
+        },
+        {
+          "command": "clawagent.improve",
+          "when": "true"
+        },
+        {
+          "command": "clawagent.document",
+          "when": "true"
+        },
+        {
+          "command": "clawagent.test",
+          "when": "true"
+        },
+        {
+          "command": "clawagent.ask",
+          "when": "true"
+        },
+        {
+          "command": "clawagent.status",
+          "when": "true"
+        },
+        {
+          "command": "clawagent.startLiveServer",
+          "when": "true"
+        }
+      ],
       "editor/context": [
         {
           "command": "clawagent.analyze",
-          "group": "1_modification",
+          "group": "1_claw_agent",
           "when": "editorTextFocus"
         },
         {
           "command": "clawagent.improve",
-          "group": "1_modification",
+          "group": "1_claw_agent",
           "when": "editorTextFocus"
         },
         {
           "command": "clawagent.document",
-          "group": "1_modification",
+          "group": "1_claw_agent",
           "when": "editorTextFocus"
         },
         {
           "command": "clawagent.test",
-          "group": "1_modification",
+          "group": "1_claw_agent",
           "when": "editorTextFocus"
+        },
+        {
+          "command": "clawagent.ask",
+          "group": "1_claw_agent",
+          "when": "editorTextFocus"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "clawagent.refresh",
+          "when": "view == clawagent.settings",
+          "group": "navigation"
+        },
+        {
+          "command": "clawagent.refresh",
+          "when": "view == clawSuggestions",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "clawagent.analyze",
+          "when": "view == clawSuggestions && viewItem == suggestion",
+          "group": "inline@1"
+        },
+        {
+          "command": "clawagent.improve",
+          "when": "view == clawSuggestions && viewItem == suggestion",
+          "group": "inline@2"
+        },
+        {
+          "command": "clawagent.test",
+          "when": "view == clawSuggestions && viewItem == suggestion",
+          "group": "inline@3"
+        },
+        {
+          "command": "clawagent.openSettings",
+          "when": "view == clawagent.settings && viewItem == setting",
+          "group": "inline"
+        },
+        {
+          "command": "clawagent.toggle",
+          "when": "view == clawagent.settings && viewItem == status",
+          "group": "inline"
         }
       ]
     },
-    "configuration": {
-      "type": "object",
-      "title": "CLAW Agent",
-      "properties": {
-        "clawagent.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Ativa/desativa o CLAW Agent"
-        },
-        "clawagent.aiProvider": {
-          "type": "string",
-          "default": "auto",
-          "enum": ["auto", "openai", "gemini", "claude", "localai", "ollama"],
-          "description": "Provedor de IA (auto = detecta automaticamente)"
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "claw-explorer",
+          "title": "CLAW AI Assistant",
+          "icon": "$(robot)"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "clawagent.settings",
+          "name": "CLAW Agent - Configurações",
+          "icon": "$(robot)",
+          "contextualTitle": "CLAW Agent Settings"
+        }
+      ],
+      "claw-explorer": [
+        {
+          "id": "clawSuggestions",
+          "name": "Sugestões do CLAW"
+        }
+      ]
+    },
+    "configuration": [
+      {
+        "title": "🤖 CLAW Agent - Configurações Gerais",
+        "properties": {
+          "clawagent.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "✅ Ativar/desativar o CLAW Agent globalmente"
+          },
+          "clawagent.autoActivate": {
+            "type": "boolean",
+            "default": true,
+            "description": "✅ Ativar automaticamente quando VS Code inicia"
+          },
+          "clawagent.showWelcome": {
+            "type": "boolean",
+            "default": true,
+            "description": "✅ Mostrar mensagem de boas-vindas na ativação"
+          }
+        }
+      },
+      {
+        "title": "🔑 Provedores de IA e Chaves de API",
+        "properties": {
+          "clawagent.aiProvider": {
+            "type": "string",
+            "default": "auto",
+            "enum": [
+              "auto",
+              "openai",
+              "gemini",
+              "claude",
+              "localai",
+              "ollama"
+            ],
+            "enumDescriptions": [
+              "Detecta automaticamente qual IA usar",
+              "OpenAI (GPT-4, GPT-3.5)",
+              "Google Gemini",
+              "Anthropic Claude",
+              "LocalAI (modelo local)",
+              "Ollama (modelos locais)"
+            ],
+            "description": "🔧 Provedor de IA para usar"
+          },
+          "clawagent.openai.apiKey": {
+            "type": "string",
+            "default": "",
+            "description": "🔐 Chave de API OpenAI (sk-xxx...)",
+            "markdownDescription": "🔐 Sua chave de API OpenAI. [Obter aqui](https://platform.openai.com/api-keys)"
+          },
+          "clawagent.openai.model": {
+            "type": "string",
+            "default": "gpt-4-turbo",
+            "enum": [
+              "gpt-4",
+              "gpt-4-turbo",
+              "gpt-4-32k",
+              "gpt-3.5-turbo",
+              "gpt-3.5-turbo-16k"
+            ],
+            "description": "📦 Modelo OpenAI para usar"
+          },
+          "clawagent.gemini.apiKey": {
+            "type": "string",
+            "default": "",
+            "description": "🔐 Chave de API Google Gemini",
+            "markdownDescription": "🔐 Sua chave de API Gemini. [Obter aqui](https://ai.google.dev)"
+          },
+          "clawagent.gemini.model": {
+            "type": "string",
+            "default": "gemini-2.0-flash",
+            "enum": [
+              "gemini-2.0-flash",
+              "gemini-1.5-pro",
+              "gemini-1.5-flash"
+            ],
+            "description": "📦 Modelo Gemini para usar"
+          },
+          "clawagent.claude.apiKey": {
+            "type": "string",
+            "default": "",
+            "description": "🔐 Chave de API Anthropic Claude",
+            "markdownDescription": "🔐 Sua chave de API Claude. [Obter aqui](https://console.anthropic.com)"
+          },
+          "clawagent.claude.model": {
+            "type": "string",
+            "default": "claude-3-opus-20240229",
+            "enum": [
+              "claude-3-opus-20240229",
+              "claude-3-sonnet-20240229",
+              "claude-3-haiku-20240307"
+            ],
+            "description": "📦 Modelo Claude para usar"
+          },
+          "clawagent.localai.endpoint": {
+            "type": "string",
+            "default": "http://localhost:8080",
+            "description": "🌐 Endpoint do LocalAI (ex: http://localhost:8080)"
+          },
+          "clawagent.localai.model": {
+            "type": "string",
+            "default": "gpt4all-j",
+            "description": "📦 Nome do modelo LocalAI instalado"
+          },
+          "clawagent.ollama.endpoint": {
+            "type": "string",
+            "default": "http://localhost:11434",
+            "description": "🌐 Endpoint do Ollama (ex: http://localhost:11434)"
+          },
+          "clawagent.ollama.model": {
+            "type": "string",
+            "default": "llama2",
+            "description": "📦 Nome do modelo Ollama instalado"
+          }
+        }
+      },
+      {
+        "title": "⚙️ Configurações de Comportamento",
+        "properties": {
+          "clawagent.requestTimeout": {
+            "type": "number",
+            "default": 30000,
+            "minimum": 5000,
+            "maximum": 300000,
+            "step": 5000,
+            "description": "⏱️ Tempo máximo de espera por resposta (ms)",
+            "markdownDescription": "⏱️ Tempo máximo de espera por resposta da IA (em milissegundos). Mínimo: 5000ms, Máximo: 300000ms"
+          },
+          "clawagent.maxRetries": {
+            "type": "number",
+            "default": 3,
+            "minimum": 1,
+            "maximum": 10,
+            "description": "🔄 Número máximo de tentativas em caso de erro"
+          },
+          "clawagent.language": {
+            "type": "string",
+            "default": "pt-br",
+            "enum": [
+              "pt-br",
+              "en-us",
+              "es-es",
+              "fr-fr",
+              "de-de",
+              "it-it",
+              "ja-jp",
+              "zh-cn"
+            ],
+            "enumDescriptions": [
+              "Português (Brasil)",
+              "English (US)",
+              "Español (España)",
+              "Français (France)",
+              "Deutsch (Deutschland)",
+              "Italiano (Italia)",
+              "日本語 (Japan)",
+              "简体中文 (China)"
+            ],
+            "description": "🌍 Idioma para interações com o agente"
+          },
+          "clawagent.autoSaveResults": {
+            "type": "boolean",
+            "default": true,
+            "description": "💾 Salvar automaticamente resultados da análise"
+          },
+          "clawagent.showNotifications": {
+            "type": "boolean",
+            "default": true,
+            "description": "🔔 Mostrar notificações de progresso"
+          }
+        }
+      },
+      {
+        "title": "🎨 Configurações de Interface",
+        "properties": {
+          "clawagent.outputTheme": {
+            "type": "string",
+            "default": "dark",
+            "enum": [
+              "dark",
+              "light",
+              "auto"
+            ],
+            "enumDescriptions": [
+              "Tema escuro",
+              "Tema claro",
+              "Automático (segue VS Code)"
+            ],
+            "description": "🎨 Tema da janela de saída"
+          },
+          "clawagent.statusBarPosition": {
+            "type": "string",
+            "default": "right",
+            "enum": [
+              "left",
+              "right"
+            ],
+            "description": "📍 Posição do ícone na barra de status (esquerda/direita)"
+          },
+          "clawagent.showStatusBar": {
+            "type": "boolean",
+            "default": true,
+            "description": "📍 Mostrar ícone na barra de status"
+          },
+          "clawagent.fontSize": {
+            "type": "number",
+            "default": 13,
+            "minimum": 10,
+            "maximum": 20,
+            "description": "🔤 Tamanho da fonte na janela de resultados"
+          }
+        }
+      },
+      {
+        "title": "📝 Configurações de Análise de Código",
+        "properties": {
+          "clawagent.analyze.depth": {
+            "type": "string",
+            "default": "balanced",
+            "enum": [
+              "quick",
+              "balanced",
+              "deep"
+            ],
+            "enumDescriptions": [
+              "Análise rápida (problemas óbvios)",
+              "Análise balanceada (recomendado)",
+              "Análise profunda (demora mais)"
+            ],
+            "description": "🔍 Profundidade da análise de código"
+          },
+          "clawagent.analyze.detectBugs": {
+            "type": "boolean",
+            "default": true,
+            "description": "🐛 Detectar e relatar bugs"
+          },
+          "clawagent.analyze.detectSecurity": {
+            "type": "boolean",
+            "default": true,
+            "description": "🔒 Detectar vulnerabilidades de segurança"
+          },
+          "clawagent.analyze.detectPerformance": {
+            "type": "boolean",
+            "default": true,
+            "description": "⚡ Detectar problemas de performance"
+          },
+          "clawagent.analyze.detectCodeSmells": {
+            "type": "boolean",
+            "default": true,
+            "description": "👃 Detectar code smells (más práticas)"
+          }
+        }
+      },
+      {
+        "title": "📚 Configurações de Documentação",
+        "properties": {
+          "clawagent.documentation.format": {
+            "type": "string",
+            "default": "markdown",
+            "enum": [
+              "markdown",
+              "html",
+              "plaintext",
+              "jsdoc",
+              "docstring"
+            ],
+            "description": "📄 Formato da documentação gerada"
+          },
+          "clawagent.documentation.includeExamples": {
+            "type": "boolean",
+            "default": true,
+            "description": "📖 Incluir exemplos de uso na documentação"
+          },
+          "clawagent.documentation.includeTypeInfo": {
+            "type": "boolean",
+            "default": true,
+            "description": "📖 Incluir informações de tipos"
+          }
+        }
+      },
+      {
+        "title": "🧪 Configurações de Testes",
+        "properties": {
+          "clawagent.test.framework": {
+            "type": "string",
+            "default": "auto",
+            "enum": [
+              "auto",
+              "jest",
+              "mocha",
+              "pytest",
+              "unittest",
+              "vitest"
+            ],
+            "description": "🛠️ Framework de testes (auto = detecta automaticamente)"
+          },
+          "clawagent.test.coverage": {
+            "type": "boolean",
+            "default": true,
+            "description": "📊 Incluir análise de cobertura de testes"
+          },
+          "clawagent.test.generateIntegration": {
+            "type": "boolean",
+            "default": true,
+            "description": "🔗 Gerar testes de integração além de unitários"
+          }
+        }
+      },
+      {
+        "title": "🔗 Configurações de Proxy e Rede",
+        "properties": {
+          "clawagent.proxy.enabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "🔗 Usar proxy para conexões de rede"
+          },
+          "clawagent.proxy.url": {
+            "type": "string",
+            "default": "",
+            "description": "🔗 URL do proxy (ex: http://proxy.company.com:8080)"
+          },
+          "clawagent.proxy.auth": {
+            "type": "string",
+            "default": "",
+            "description": "🔐 Autenticação do proxy (user:password)"
+          },
+          "clawagent.ssl.verifyCertificate": {
+            "type": "boolean",
+            "default": true,
+            "description": "🔒 Verificar certificado SSL"
+          }
+        }
+      },
+      {
+        "title": "🐛 Configurações de Debug e Logging",
+        "properties": {
+          "clawagent.debug.enabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "🐛 Ativar modo debug"
+          },
+          "clawagent.debug.logLevel": {
+            "type": "string",
+            "default": "info",
+            "enum": [
+              "debug",
+              "info",
+              "warn",
+              "error"
+            ],
+            "description": "📋 Nível de detalhe dos logs"
+          },
+          "clawagent.debug.saveLog": {
+            "type": "boolean",
+            "default": false,
+            "description": "💾 Salvar logs em arquivo"
+          },
+          "clawagent.debug.logPath": {
+            "type": "string",
+            "default": "${workspaceFolder}/.claw-agent.log",
+            "description": "📂 Caminho do arquivo de log"
+          }
+        }
+      },
+      {
+        "title": "🎯 Configurações de Suporte Multilíngue",
+        "properties": {
+          "clawagent.support.supportedLanguages": {
+            "type": "array",
+            "default": [
+              "python",
+              "javascript",
+              "typescript",
+              "java",
+              "csharp",
+              "cpp",
+              "c",
+              "go",
+              "rust",
+              "php",
+              "ruby",
+              "swift",
+              "kotlin",
+              "scala",
+              "r",
+              "sql",
+              "html",
+              "css",
+              "jsx",
+              "tsx"
+            ],
+            "description": "🔤 Linguagens de programação suportadas"
+          },
+          "clawagent.support.ignorePatterns": {
+            "type": "array",
+            "default": [
+              "node_modules",
+              ".git",
+              "dist",
+              "build",
+              "__pycache__",
+              ".venv",
+              "venv"
+            ],
+            "description": "🚫 Pastas/padrões a ignorar na análise"
+          }
         }
       }
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -115,7 +660,8 @@
   "devDependencies": {
     "@types/node": "^18.0.0",
     "@types/vscode": "^1.85.0",
-    "typescript": "^5.3.0"
+    "typescript": "^5.3.0",
+    "vsce": "^2.15.0"
   },
   "dependencies": {
     "axios": "^1.6.0"
